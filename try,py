@@ -1,0 +1,57 @@
+from enum import IntEnum
+class Action(IntEnum):
+    N = 0  # Up
+    E = 1  # Right
+    S = 2  # Down
+    W = 3  # Left
+    D = 4
+
+class Droplet:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.visited_coordinates = set()
+
+    def move(self, action, width=7, length=7):
+        if action == Action.N:
+            if self.y > 0:
+                self.y -= self.move_amount
+        elif action == Action.E:
+            if self.x < width - 1:
+                self.x += self.move_amount
+        elif action == Action.S:
+            if self.y < length - 1:
+                self.y += self.move_amount
+        elif action == Action.W:
+            if self.x > 0:
+                self.x -= self.move_amount
+        elif action == Action.D:
+            return
+        self.visited_coordinates.add((self.x, self.y))
+
+    def isPointInside(self, point_x, point_y, width, height):
+        return self.x < point_x + width and self.x >= point_x and self.y < point_y + height and self.y >= point_y 
+    # For 8 Negibours width and height will be 2
+    
+    def all_footprint_traversed(self, footprint_coordinates):
+        return all(coordinate in self.visited_coordinates for coordinate in footprint_coordinates) 
+    # Check if all footprint coordinates are in the set of visited coordinates
+    
+    def visited_footprint_coordinates(self, footprint_coordinates):
+        visited_footprint = [
+            coordinate for coordinate in footprint_coordinates if coordinate in self.visited_coordinates]
+        return visited_footprint
+    # Print visited footprint coordinates
+
+    def getDistance(self, droplet):
+        if isinstance(droplet, Droplet):
+            delta_x = abs(self.x - droplet.x)
+            delta_y = abs(self.y - droplet.y)
+        elif isinstance(droplet, tuple):
+            delta_x = abs(self.x - droplet[0])
+            delta_y = abs(self.y - droplet[1])
+        else:
+            raise TypeError("Wrong object to calculate distance")
+        return delta_x + delta_y
+    # I have used Manhattan Distance
+
